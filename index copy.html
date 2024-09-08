@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fat4Fun</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/vue@3.2.45/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script>
+    <link rel="stylesheet" href="NavFooter.css" />
+    <style>
+      /* 自定義樣式，讓手風琴固定在左側 */
+      .accordion-menu {
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        margin-top: 150px;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+      }
+
+      .accordion-item {
+        border: none;
+      }
+
+      .accordion-button {
+        background-color: #343a40;
+        color: white;
+      }
+
+      .accordion-button:not(.collapsed) {
+        background-color: #495057;
+        color: white;
+      }
+
+      .accordion-button:focus {
+        box-shadow: none;
+      }
+
+      .accordion-body ul {
+        padding-left: 1rem;
+      }
+
+      .accordion-body ul li {
+        list-style: none;
+      }
+
+      .accordion-body ul li a {
+        text-decoration: none;
+        color: #495057;
+        cursor: pointer;
+      }
+
+      .accordion-body ul li a:hover {
+        color: #007bff;
+      }
+      
+
+      .content {
+        margin-top: 150px;
+        margin-left: 260px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 80vh; /* 讓內容區占據至少80%頁面高度 */
+      }
+
+      .card-container {  
+        min-height: 35vh; /* 根據需要調整這裡的高度，確保卡片區足夠大來推動分頁 */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-bottom: auto;
+      }
+      .card {
+        width: 18rem;
+        margin: 1rem;
+      }
+      .pagination {
+        margin-top: auto; /* 保證分頁按鈕在卡片區域下方 */
+      }
+
+      
+      footer{
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- nav start-->
+
+    <!-- <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+      <div class="container-fluid">
+        <a href="index.html" class="col-1">
+          <img src="image/logo1.webp" alt="首頁" class="img-fluid rounded" />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav col-6">
+            <li class="nav-item col-3">
+              <a class="nav-link" href="#">最新消息</a>
+            </li>
+            <li class="nav-item col-3">
+              <a class="nav-link" href="#">熱門商品</a>
+            </li>
+            <li class="nav-item col-3">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                style="color: red"
+                href="PC.html"
+                >PC專區</a
+              >
+            </li>
+            <li class="nav-item col-3">
+              <a class="nav-link disabled" aria-disabled="true">週邊專區</a>
+            </li>
+          </ul>
+        </div>
+        <form class="d-flex align-items-center" role="search">
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1"
+              ><i class="bi bi-search"></i
+            ></span>
+            <input
+              class="form-control"
+              type="search"
+              placeholder="請輸入商品名稱"
+              aria-label="Search"
+            />
+          </div>
+          <button class="btn btn-danger ms-2" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+
+        <div class="d-flex">
+          <a href="Member.html" class="ms-5 btn btn-link">
+            <i class="bi bi-person-circle"></i>
+          </a>
+          <a href="Register.html" class="ms-5 btn btn-link">
+            <i class="bi bi-box-arrow-in-left"></i>
+          </a>
+          <a href="Member.html" class="ms-5 btn btn-link">
+            <i class="bi bi-cart"></i>
+          </a>
+        </div>
+      </div>
+    </nav> -->
+    <!-- nav end -->
+    <!-- accordion start -->
+     <div id="app">
+       <!-- 手風琴組件 -->
+       <div class="accordion accordion-menu" id="accordionExample">
+         <div class="accordion-item" v-for="(item, index) in series" :key="index">
+           <h2 class="accordion-header" :id="'heading' + index">
+             <button
+             class="accordion-button"
+             type="button"
+             data-bs-toggle="collapse"
+             :data-bs-target="'#collapse' + index"
+             aria-expanded="false"
+             :aria-controls="'collapse' + index"
+             @click="selectedAccordion = index"
+             :class="{'active-accordion': selectedAccordion === index}"
+             >
+             {{ item.name }}
+            </button>
+          </h2>
+          <div
+          :id="'collapse' + index"
+          class="accordion-collapse collapse"
+          data-bs-parent="#accordionExample"
+          >
+          <div class="accordion-body">
+            <ul>
+              <li v-for="sub in item.subcategories" :key="sub.name">
+                <a href="#" @click="filterBySubcategory(sub.name)">{{ sub.name }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 右側內容區域 -->
+      <div class="content">
+        <div class="row mb-3">
+          <!-- 價格區間輸入框 -->
+          <div class="col-md-2">
+            <label for="minPrice" class="form-label "></label>
+            <input
+              id="minPrice"
+              type="number"
+              class="form-control"
+              v-model.number="minPrice"
+              placeholder="最低價格"
+              @input="filterProducts"
+            />
+          </div>
+          <div class="col-md-2">
+            <label for="maxPrice" class="form-label"></label>
+            <input
+              id="maxPrice"
+              type="number"
+              class="form-control"
+              v-model.number="maxPrice"
+              placeholder="最高價格"
+              @input="filterProducts"
+            />
+          </div>
+    
+          <!-- 價格排序下拉選單 -->
+          <div class="col-md-2">
+            <label for="priceSort" class="form-label"></label>
+            <select id="priceSort" class="form-select" v-model="selectedPriceSort" @change="filterProducts">
+              <option value="">默認排序</option>
+              <option value="asc">價格：低到高</option>
+              <option value="desc">價格：高到低</option>
+            </select>
+          </div>
+    
+          <!-- 品牌篩選下拉選單 -->
+          <div class="col-md-2">
+            <label for="brandSelect" class="form-label"></label>
+            <select id="brandSelect" class="form-select" v-model="selectedBrand" @change="filterProducts">
+              <option value="">所有品牌</option>
+              <option value="ASUS">ASUS-華碩</option>
+              <option value="MSI">MSI-微星</option>
+              <option value="ACER">ACER-宏碁</option>
+              <option value="GIGABYTE">GIGABYTE-技嘉</option>
+            </select>
+          </div>
+    
+          <!-- 新增的多層次下拉菜單 -->
+          <div class="col-md-2">
+            <label for="categorySelect" class="form-label"></label>
+            <select id="categorySelect" class="form-select" v-model="selectedCategory" @change="updateSubOptions">
+              <option value="">選擇類別</option>
+              <option value="harddrive">硬碟</option>
+              <option value="memory">記憶體</option>
+              <option value="gpu">顯示卡</option>
+            </select>
+          </div>
+    
+          <!-- 子類別動態顯示 -->
+          <div class="col-md-2">
+            <label for="subCategorySelect" class="form-label"></label>
+            <select id="subCategorySelect" class="form-select" v-model="selectedSubCategory" @change="filterProducts">
+              <option value="">請先選擇類別</option>
+              <option v-for="option in subOptions" :key="option" :value="option">{{ option }}</option>
+            </select>
+          </div>
+        </div>
+        
+        <div>Routerview</div>
+    <router-view></router-view>
+    
+        <!-- 商品卡片區域 -->
+        <div class="card-container ">
+          <router-link 
+            v-for="product in paginatedProducts" 
+            :key="product.id" 
+            :to=`/product/${product.id}`
+          >
+          <div class="card">
+            <img :src="product.image" class="card-img-top" :alt="product.name" />
+            <div class="card-body">
+              <h5 class="card-title">
+                {{ product.name }} - {{ product.harddrive }} / {{ product.memory }} / {{ product.gpu }}
+              </h5>
+              <p class="card-text">{{ product.description }}</p>
+              <p><strong>品牌:</strong> {{ product.brand }}</p>
+              <p><strong>價格:</strong> ${{ product.price }}</p>
+            </div>
+          </div>
+        </router-link>
+        </div>
+    
+        <!-- 分頁按鈕 -->
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" :class="{ disabled: currentPage === 1 }">
+      <a class="page-link" href="#" @click.prevent="setCurrentPage(currentPage - 1)">上一頁</a>
+    </li>
+
+    <li class="page-item" v-for="page in totalPages" :key="page" :class="{ active: currentPage === page }">
+      <a class="page-link" href="#" @click.prevent="setCurrentPage(page)">{{ page }}</a>
+    </li>
+
+    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+      <a class="page-link" href="#" @click.prevent="setCurrentPage(currentPage + 1)">下一頁</a>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+    <script>
+    const products = [
+            { id: 1,name: 'INTEL i5 10400F', description: '適合日常使用', category: 'i5', brand: 'ASUS', price: 30000, image: '/image/a1.webp', harddrive: '1TB', memory: '16G', gpu: 'RTX4060' },
+            { id: 2, name: 'INTEL i7 10700K', description: '高性能處理器', category: 'i7', brand: 'MSI', price: 35000, image: 'image2.jpg', harddrive: '2TB', memory: '32G', gpu: 'RTX4070' },
+            { id: 3, name: 'INTEL i9 10900K', description: '專業處理器', category: 'i9', brand: 'ACER', price: 50000, image: 'image3.jpg', harddrive: '1TB', memory: '16G', gpu: 'RTX4080' },
+            { id: 4, name: 'AMD Ryzen 5 3600', description: '遊戲利器', category: 'Ryzen 5', brand: 'GIGABYTE', price: 18000, image: 'image4.jpg', harddrive: '2TB', memory: '32G', gpu: 'RTX4060' },
+            { id: 5, name: 'AMD Ryzen 7 3700X', description: '高效能選擇', category: 'Ryzen 7', brand: 'ASUS', price: 32000, image: 'image5.jpg', harddrive: '1TB', memory: '16G', gpu: 'RTX4070' },
+            { id: 6, name: 'AMD Ryzen 9 3900X', description: '頂級處理器', category: 'Ryzen 9', brand: 'MSI', price: 45000, image: 'image6.jpg', harddrive: '2TB', memory: '32G', gpu: 'RTX4080' },
+            { id: 7, name: 'Product 7', description: 'Description 7', category: 'i5', brand: 'ASUS', price: 25000, image: 'image7.jpg', harddrive: '1TB', memory: '16G', gpu: 'RTX4060' },
+        { id: 8, name: 'Product 8', description: 'Description 8', category: 'i7', brand: 'MSI', price: 27000, image: 'image8.jpg', harddrive: '2TB', memory: '32G', gpu: 'RTX4070' },
+        { id: 9, name: 'Product 9', description: 'Description 9', category: 'i9', brand: 'ACER', price: 29000, image: 'image9.jpg', harddrive: '1TB', memory: '16G', gpu: 'RTX4080' },
+        { id: 10, name: 'Product 10', description: 'Description 10', category: 'Ryzen 5', brand: 'GIGABYTE', price: 22000, image: 'image10.jpg', harddrive: '2TB', memory: '32G', gpu: 'RTX4060' },
+        { id: 11, name: 'Product 11', description: 'Description 11', category: 'Ryzen 7', brand: 'ASUS', price: 24000, image: 'image11.jpg', harddrive: '1TB', memory: '16G', gpu: 'RTX4070' },
+        { id: 12, name: 'Product 12', description: 'Description 12', category: 'Ryzen 9', brand: 'MSI', price: 26000, image: 'image12.jpg', harddrive: '2TB', memory: '32G', gpu: 'RTX4080' },
+          ]
+
+    const app = Vue.createApp({
+      data() {
+        return {
+          selectedSubcategory: '',
+          selectedBrand: '',
+          selectedPriceSort: '',
+          minPrice: null,
+          maxPrice: null,
+          selectedCategory: '',
+          selectedSubCategory: '',
+          subOptions: [],
+    
+          series: [
+            {
+              name: 'INTEL 系列',
+              subcategories: [
+                { name: 'i5' },
+                { name: 'i7' },
+                { name: 'i9' }
+              ]
+            },
+            {
+              name: 'AMD 系列',
+              subcategories: [
+                { name: 'Ryzen 5' },
+                { name: 'Ryzen 7' },
+                { name: 'Ryzen 9' }
+              ]
+            }
+          ],
+    
+          products: products,
+          
+          filteredProducts: [], // 篩選後的商品
+          currentPage: 1,  // 當前頁數
+          itemsPerPage: 10, // 每頁顯示的商品數量
+        };
+      },
+      provide() {
+        // Provide the products data to all child components
+        return {
+          products: this.products
+        };
+      },
+      mounted() {
+        this.filteredProducts = this.products;
+      },
+    
+      computed: {
+        // 返回當前頁顯示的商品
+        paginatedProducts() {
+          const start = (this.currentPage - 1) * this.itemsPerPage;
+          const end = start + this.itemsPerPage;
+          return this.filteredProducts.slice(start, end);
+        },
+    
+        // 計算總頁數
+        totalPages() {
+          return Math.ceil(this.filteredProducts.length / this.itemsPerPage);
+        }
+      },
+    
+      methods: {
+        // 根據子分類篩選商品
+        filterBySubcategory(subcategory) {
+          this.selectedSubcategory = subcategory;
+          this.filterProducts();
+        },
+    
+        // 更新子類別選項
+        updateSubOptions() {
+          if (this.selectedCategory === 'harddrive') {
+            this.subOptions = ['1TB', '2TB'];
+          } else if (this.selectedCategory === 'memory') {
+            this.subOptions = ['16G', '32G'];
+          } else if (this.selectedCategory === 'gpu') {
+            this.subOptions = ['RTX4060', 'RTX4070', 'RTX4080'];
+          } else {
+            this.subOptions = [];
+          }
+          this.selectedSubCategory = ''; // 重置已選擇的子類別
+          this.filterProducts();
+        },
+    
+        // 根據子分類、品牌、價格區間和子類別篩選商品
+        filterProducts() {
+          let products = this.products.filter(product => {
+            const matchesSubcategory = this.selectedSubcategory ? product.category === this.selectedSubcategory : true;
+            const matchesBrand = this.selectedBrand ? product.brand === this.selectedBrand : true;
+            const matchesMinPrice = this.minPrice !== null ? product.price >= this.minPrice : true;
+            const matchesMaxPrice = this.maxPrice !== null ? product.price <= this.maxPrice : true;
+    
+            // 根據選中的子類別篩選
+            const matchesSubCategory = this.selectedSubCategory
+              ? product[this.selectedCategory] === this.selectedSubCategory
+              : true;
+    
+            return matchesSubcategory && matchesBrand && matchesMinPrice && matchesMaxPrice && matchesSubCategory;
+          });
+    
+          // 根據價格排序
+          if (this.selectedPriceSort === 'asc') {
+            products.sort((a, b) => a.price - b.price);
+          } else if (this.selectedPriceSort === 'desc') {
+            products.sort((a, b) => b.price - a.price);
+          }
+    
+          this.filteredProducts = products;
+        },
+    
+        // 切換當前頁數
+        setCurrentPage(page) {
+          if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+          }
+        }
+      }
+    });
+
+    const ProductId = {
+      template: `<div>
+        <div>Product ID: {{id}}</div>
+        <div>{{JSON.stringify(product)}}</div>
+      </div>`,
+      computed: {
+        id() {
+          // Access the `id` parameter from the route
+          // console.log(this.$route.params.id);
+          return this.$route.params.id;
+        },
+        product() {
+          console.log(products)
+         return products?.find(product => String(product.id) === this.$route.params.id)
+        }
+      },
+    };
+
+    const Index = { template: '<div style="font-size: 5rem;">首頁</div>' }
+
+    const router = VueRouter.createRouter({
+    history: VueRouter.createWebHashHistory(), // Ensures hash mode is used
+    routes: [
+      { path: '/', component: Index },
+      { path: '/product/:id', component: ProductId },
+    ],
+  });
+
+    app.component('router-link', VueRouter.RouterLink)
+    app.component('router-view', VueRouter.RouterView)
+    app.use(router)
+    
+    app.mount('#app');
+    </script>
+
+      <!-- card end -->
+    </div>
+    <!-- accordion end -->
+     <!-- footer start-->
+    <footer>
+      <div class="container">
+        <div class="row d-flex justify-content-between align-items-start">
+          <!-- 公司資訊 -->
+          <div class="col-md-4 text-center">
+            <h5>關於我們</h5>
+            <p>
+              Fat4Fun 是一家致力於提供高性能電競設備的公司
+              <br />專注於滿足玩家的需求。
+            </p>
+          </div>
+
+          <!-- 聯絡我們 -->
+          <div class="col-md-4 text-center mx-auto">
+            <h5>聯絡我們</h5>
+            <p class="text-center">
+              Email: support@fat4fun.com <br />
+              電話: +886 1234-5678
+            </p>
+          </div>
+
+          <!-- 社交媒體 -->
+          <div class="col-md-4 text-center">
+            <h5>關注我們</h5>
+            <div class="social-icons">
+              <a
+                href="https://www.facebook.com/profile.php?id=100009114848126"
+                class="text-white"
+              >
+                <i class="bi bi-facebook"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/liaohongming/"
+                class="text-white"
+              >
+                <i class="bi bi-instagram"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部聲明 -->
+        <div class="row mt-4 bottom-info">
+          <div class="col text-center">
+            <p class="mb-0">
+              Fat4Fun &copy; 2024. All rights reserved.
+              <a href="#">隱私政策</a> | <a href="#">服務條款</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- footer end --> 
+  </body>
+  <script type="module" src="/src/main.js"></script>
+  
+</html>
+  
